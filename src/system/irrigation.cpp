@@ -121,11 +121,11 @@ void IrrigationSystem::InitRelays()
                  .setTimeProvider(timeProviders[0]) // Change of time provider dinamically...
                  .forPin(IO_0)
                  .onDay(DAYS_PER_WEEK)
-                 .onTime(3, 42, 0)
+                 .onTime(15, 12, 0)
                  .duration(20)
                  .forPin(IO_1)
                  .onDay(DAYS_PER_WEEK)
-                 .onTime(3, 43, 0)
+                 .onTime(15, 13, 0)
                  .duration(30)
                  .done()
                  ->build();
