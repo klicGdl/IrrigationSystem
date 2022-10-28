@@ -38,11 +38,7 @@ bool TimeProviderRTC::update()
     datetime.hour   = now.hour();
     datetime.minute = now.minute();
     datetime.second = now.second();
-    if (now.unixtime() < MIN_UNIX_TIME)
-    {
-        return false;
-    }
-    return true;
+    return now.unixtime() >= MIN_UNIX_TIME;
 }
 
 void TimeProviderRTC::set(Time_s newNow)

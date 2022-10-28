@@ -80,23 +80,31 @@ public:
 
     bool update() {
         bool anySucess = false;
+        DateTime now(getBuildTimeAsUnixTime(__DATE__, __TIME__));
+        DateTime prev = datetime.toDateTime();
         _for_each(providers, _tp, ITimeProvider *)
         {
             logger << LOG_DEBUG << "Updating " << _tp->getTypeName() << EndLine;
             bool status = _tp->update();
             if (status) {
                 logger << LOG_DEBUG << LOGGER_TEXT_GREEN << "Success!" << EndLine;
-                if (!anySucess) {
-                    datetime = _tp->get();
+                now = _tp->get().toDateTime();
+                if (now >= prev) {
+                    datetime = now;
+                    anySucess = true;
                 }
-                anySucess = true;
             } else {
                 logger << LOG_ERROR << "Error while updating time provider!" << EndLine;
-                if (anySucess) {
-                    _tp->set(datetime);
-                }
             }
         }
+
+        if (!anySucess) { return anySucess; }
+
+        _for_each(providers, _tp, ITimeProvider *)
+        {
+            _tp->set(datetime);
+        }
+
         return anySucess;
     }
 };
