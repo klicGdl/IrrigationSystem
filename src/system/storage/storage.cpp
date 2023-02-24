@@ -19,49 +19,45 @@
 #include "storage.h"
 
 
-static String templateId;
-static String templateName;
-static String authToken;
-
-Storage::Storage(int _num_relays)
+storage::storage(int _num_releys)
 {
-  this->num_relays = _num_relays;
-  // offset for credentials, plus space requred to save the configuration for each relay
-  EEPROM.begin(CONF_MEM_START + (sizeof(eeprom_map_conf_time_t ) * _num_relays));
+  this->num_releys = _num_releys;
+  // offset for credentials, plus space requred to save the configuration for each reley
+  EEPROM.begin(CONF_MEM_START + (sizeof(conf_time_t) * _num_releys));
 }
 
-Storage::~Storage()
+storage::~storage()
 {
 }
 
-bool Storage::saveCredentials(String templateID, String templateName, String authToken)
+bool storage::saveCredentials(String templateID, String templateName, String authToken)
 {
-  EEPROM.put(offsetof(EEPROM_CredentialStorage_t, templateid),templateID);
-  EEPROM.put(offsetof(EEPROM_CredentialStorage_t, templateName), templateName);
-  EEPROM.put(offsetof(EEPROM_CredentialStorage_t, authToken), authToken);
+  EEPROM.put(BLYNK_TEMPLATE_ID_BASE,templateID);
+  EEPROM.put(BLYNK_TEMPLATE_NAME_BASE, templateName);
+  EEPROM.put(BLYNK_AUTH_TOKEN_BASE, authToken);
   EEPROM.commit();
   return true;
 }
 
-bool Storage::saveConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days)
+bool storage::saveConfiguration(int releyID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days)
 {
-  relayConfigTime.hour      = hour;
-  relayConfigTime.min       = minute;
-  relayConfigTime.sec       = second;
-  relayConfigTime.duration  = duration;
-  relayConfigTime.days      = days;
+  reley.hour = hour;
+  reley.min = minute;
+  reley.sec = second;
+  reley.duration = duration;
+  reley.days = days;
 
-  EEPROM.put(CONF_MEM_START * relayID, relayConfigTime);
+  EEPROM.put(CONF_MEM_START * releyID, reley);
   EEPROM.commit();
 
   return true;
 }
 
-bool Storage::getCredentials(String templateID, String templateName, String authToken)
+bool storage::getCredentials(String templateID, String templateName, String authToken)
 {
-  EEPROM.get(offsetof(EEPROM_CredentialStorage_t, templateid),templateID);
-  EEPROM.get(offsetof(EEPROM_CredentialStorage_t, templateName),templateName);
-  EEPROM.get(offsetof(EEPROM_CredentialStorage_t, authToken),authToken);
+  EEPROM.get(BLYNK_TEMPLATE_ID_BASE,templateID);
+  EEPROM.get(BLYNK_TEMPLATE_NAME_BASE,templateName);
+  EEPROM.get(BLYNK_AUTH_TOKEN_BASE,authToken);
 
   logger << LOG_INFO << "templateID " << templateID << EndLine;
   logger << LOG_INFO << "templateName " << templateName << EndLine;
@@ -70,14 +66,14 @@ bool Storage::getCredentials(String templateID, String templateName, String auth
   return true;
 }
 
-bool Storage::getConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days)
+bool storage::getConfiguration(int releyID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days)
 {
-  EEPROM.get(CONF_MEM_START + (sizeof(eeprom_map_conf_time_t) * relayID), relayConfigTime);
-  hour      = relayConfigTime.hour;
-  minute    = relayConfigTime.min;
-  second    = relayConfigTime.sec;
-  duration  = relayConfigTime.duration;
-  days      = relayConfigTime.days;
+  EEPROM.get(CONF_MEM_START * releyID, reley);
+  hour    = reley.hour;
+  minute  = reley.min;
+  second  = reley.sec;
+  duration  = reley.duration;
+  days    = reley.days;
 
   return true;
 }
