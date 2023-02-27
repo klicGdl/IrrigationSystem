@@ -24,15 +24,12 @@
 #include  <stdint.h>
 #include "../../utils/logger.h"
 
-typedef struct {
-  uint8_t templateid [20];
-  uint8_t templateName [20];
-  uint8_t authToken [40];
-  uint8_t padding [20];
-} EEPROM_CredentialStorage_t;
-
-#define CONF_MEM_START  sizeof(EEPROM_CredentialStorage_t)  // leave the first space for credentials
-                                                            // save the conf above this address
+#define TEMPLATE_ID_MAX     20  // Max number of characters
+#define TEMPLATE_NAME_MAX   20
+#define AUTH_TOKEN_MAX      40
+#define TEMPLATE_ID_BASE    0   // base address in bytes
+#define TEMPLATE_NAME_BASE  20
+#define AUTH_TOKEN_BASE     40
 
 
 typedef struct {
@@ -53,7 +50,6 @@ class Storage
 private:
   int num_releys;
   eeprom_map_conf_time_t ReleyConfigTime;
-  EEPROM_CredentialStorage_t CredentialStorage;
   
 public:
   Storage(int _num_releys);

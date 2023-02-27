@@ -32,9 +32,9 @@ Storage::~Storage()
 
 bool Storage::saveCredentials(String templateID, String templateName, String authToken)
 {
-  EEPROM.put(offsetof(EEPROM_CredentialStorage_t, templateid),templateID);
-  EEPROM.put(offsetof(EEPROM_CredentialStorage_t, templateName), templateName);
-  EEPROM.put(offsetof(EEPROM_CredentialStorage_t, authToken), authToken);
+  EEPROM.put(TEMPLATE_ID_BASE,templateID);
+  EEPROM.put(TEMPLATE_NAME_BASE, templateName);
+  EEPROM.put(AUTH_TOKEN_BASE, authToken);
   EEPROM.commit();
   return true;
 }
@@ -55,9 +55,9 @@ bool Storage::saveConfiguration(int releyID, uint8_t hour, uint8_t minute, uint8
 
 bool Storage::getCredentials(String templateID, String templateName, String authToken)
 {
-  EEPROM.get(offsetof(EEPROM_CredentialStorage_t, templateid),templateID);
-  EEPROM.get(offsetof(EEPROM_CredentialStorage_t, templateName),templateName);
-  EEPROM.get(offsetof(EEPROM_CredentialStorage_t, authToken),authToken);
+  EEPROM.get(TEMPLATE_ID_BASE,templateID);
+  EEPROM.get(TEMPLATE_NAME_BASE,templateName);
+  EEPROM.get(AUTH_TOKEN_BASE,authToken);
 
   logger << LOG_INFO << "templateID " << templateID << EndLine;
   logger << LOG_INFO << "templateName " << templateName << EndLine;
