@@ -20,17 +20,20 @@
 #define __IRRIGATION_SYSTEM_STORAGE_STORAGE_H__
 #include <Arduino.h>
 #include <EEPROM.h>
+#include <stddef.h>
+#include  <stdint.h>
 #include "../../utils/logger.h"
 
-#define BLYNK_TEMPLATE_ID_MAX     20  // Max number of characters
-#define BLYNK_TEMPLATE_NAME_MAX   20
-#define BLYNK_AUTH_TOKEN_MAX      40
-#define BLYNK_TEMPLATE_ID_BASE    0   // base address in bytes
-#define BLYNK_TEMPLATE_NAME_BASE  20
-#define BLYNK_AUTH_TOKEN_BASE     40
+typedef struct {
+  uint8_t templateid [20];
+  uint8_t templateName [20];
+  uint8_t authToken [40];
+  uint8_t padding [20];
+} EEPROM_CredentialStorage_t;
 
-#define CONF_MEM_START  80            // leave the first space for credentials
-                                      // save the conf above this address
+#define CONF_MEM_START  sizeof(EEPROM_CredentialStorage_t)  // leave the first space for credentials
+                                                            // save the conf above this address
+
 
 typedef struct {
   uint8_t hour;
@@ -38,22 +41,23 @@ typedef struct {
   uint8_t sec;
   uint8_t duration;
   uint8_t days;
-} conf_time_t;
+} eeprom_map_conf_time_t;
 
 
 String templateId;
 String templateName;
 String authToken;
 
-class storage
+class Storage
 {
 private:
   int num_releys;
-  conf_time_t reley;
+  eeprom_map_conf_time_t ReleyConfigTime;
+  EEPROM_CredentialStorage_t CredentialStorage;
   
 public:
-  storage(int _num_releys);
-  ~storage();
+  Storage(int _num_releys);
+  ~Storage();
   bool saveCredentials(String templateID, String templateName, String authToken);
   bool saveConfiguration(int releyID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days);
   bool getCredentials(String templateID, String templateName, String authToken);
