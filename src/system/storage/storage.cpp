@@ -41,11 +41,11 @@ bool Storage::saveCredentials(String templateID, String templateName, String aut
 
 bool Storage::saveConfiguration(int releyID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days)
 {
-  ReleyConfigTime.hour = hour;
-  ReleyConfigTime.min = minute;
-  ReleyConfigTime.sec = second;
-  ReleyConfigTime.duration = duration;
-  ReleyConfigTime.days = days;
+  ReleyConfigTime.hour      = hour;
+  ReleyConfigTime.min       = minute;
+  ReleyConfigTime.sec       = second;
+  ReleyConfigTime.duration  = duration;
+  ReleyConfigTime.days      = days;
 
   EEPROM.put(CONF_MEM_START * releyID, ReleyConfigTime);
   EEPROM.commit();
@@ -69,11 +69,11 @@ bool Storage::getCredentials(String templateID, String templateName, String auth
 bool Storage::getConfiguration(int releyID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days)
 {
   EEPROM.get(CONF_MEM_START * releyID, ReleyConfigTime);
-  hour    = ReleyConfigTime.hour;
-  minute  = ReleyConfigTime.min;
-  second  = ReleyConfigTime.sec;
+  hour      = ReleyConfigTime.hour;
+  minute    = ReleyConfigTime.min;
+  second    = ReleyConfigTime.sec;
   duration  = ReleyConfigTime.duration;
-  days    = ReleyConfigTime.days;
+  days      = ReleyConfigTime.days;
 
   return true;
 }

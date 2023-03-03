@@ -21,7 +21,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <stddef.h>
-#include  <stdint.h>
+#include <stdint.h>
 #include "../../utils/logger.h"
 
 typedef struct {
@@ -53,7 +53,6 @@ class Storage
 private:
   int num_releys;
   eeprom_map_conf_time_t ReleyConfigTime;
-  EEPROM_CredentialStorage_t CredentialStorage;
   
 public:
   Storage(int _num_releys);
