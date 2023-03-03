@@ -53,7 +53,6 @@ class Storage
 private:
   int num_releys;
   eeprom_map_conf_time_t ReleyConfigTime;
-  EEPROM_CredentialStorage_t CredentialStorage;
   
 public:
   Storage(int _num_releys);
