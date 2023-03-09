@@ -19,11 +19,15 @@
 #include "storage.h"
 
 
-Storage::Storage(int _num_releys)
+static String templateId;
+static String templateName;
+static String authToken;
+
+Storage::Storage(int _num_relays)
 {
-  this->num_releys = _num_releys;
-  // offset for credentials, plus space requred to save the configuration for each reley
-  EEPROM.begin(CONF_MEM_START + (sizeof(eeprom_map_conf_time_t ) * _num_releys));
+  this->num_relays = _num_relays;
+  // offset for credentials, plus space requred to save the configuration for each relay
+  EEPROM.begin(CONF_MEM_START + (sizeof(eeprom_map_conf_time_t ) * _num_relays));
 }
 
 Storage::~Storage()
@@ -39,15 +43,15 @@ bool Storage::saveCredentials(String templateID, String templateName, String aut
   return true;
 }
 
-bool Storage::saveConfiguration(int releyID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days)
+bool Storage::saveConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days)
 {
-  ReleyConfigTime.hour = hour;
-  ReleyConfigTime.min = minute;
-  ReleyConfigTime.sec = second;
-  ReleyConfigTime.duration = duration;
-  ReleyConfigTime.days = days;
+  relayConfigTime.hour      = hour;
+  relayConfigTime.min       = minute;
+  relayConfigTime.sec       = second;
+  relayConfigTime.duration  = duration;
+  relayConfigTime.days      = days;
 
-  EEPROM.put(CONF_MEM_START * releyID, ReleyConfigTime);
+  EEPROM.put(CONF_MEM_START * relayID, relayConfigTime);
   EEPROM.commit();
 
   return true;
@@ -66,14 +70,14 @@ bool Storage::getCredentials(String templateID, String templateName, String auth
   return true;
 }
 
-bool Storage::getConfiguration(int releyID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days)
+bool Storage::getConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days)
 {
-  EEPROM.get(CONF_MEM_START * releyID, ReleyConfigTime);
-  hour    = ReleyConfigTime.hour;
-  minute  = ReleyConfigTime.min;
-  second  = ReleyConfigTime.sec;
-  duration  = ReleyConfigTime.duration;
-  days    = ReleyConfigTime.days;
+  EEPROM.get(CONF_MEM_START + (sizeof(eeprom_map_conf_time_t) * relayID), relayConfigTime);
+  hour      = relayConfigTime.hour;
+  minute    = relayConfigTime.min;
+  second    = relayConfigTime.sec;
+  duration  = relayConfigTime.duration;
+  days      = relayConfigTime.days;
 
   return true;
 }

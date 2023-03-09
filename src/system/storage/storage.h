@@ -41,23 +41,19 @@ typedef struct {
 } eeprom_map_conf_time_t;
 
 
-String templateId;
-String templateName;
-String authToken;
-
 class Storage
 {
 private:
-  int num_releys;
-  eeprom_map_conf_time_t ReleyConfigTime;
+  int num_relays;
+  eeprom_map_conf_time_t relayConfigTime;
   
 public:
-  Storage(int _num_releys);
+  Storage(int _num_relays);
   ~Storage();
   bool saveCredentials(String templateID, String templateName, String authToken);
-  bool saveConfiguration(int releyID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days);
+  bool saveConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days);
   bool getCredentials(String templateID, String templateName, String authToken);
-  bool getConfiguration(int releyID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days);
+  bool getConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days);
   
 };
 
