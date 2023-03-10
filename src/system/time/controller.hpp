@@ -57,7 +57,7 @@ class SystemTimeProvider : public ITimeProvider {
     if (now.unixtime() == SECONDS_FROM_1970_TO_2000) {
       return false;
     }
-    datetime = now;
+
     updateBackupSourcesWithDateTime(now);
     return true;
   }
@@ -73,9 +73,6 @@ private:
         DateTime d = _tp->get().toDateTime();
         if (now <= d) {
           now = d;
-        }
-        if (_tp->getType() == PRIMARY) {
-          return now;
         }
       } else {
         logger << LOG_ERROR << "Error while updating time provider!" << EndLine;
