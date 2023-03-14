@@ -60,6 +60,8 @@ public:
   bool saveConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days);
   bool getCredentials(String templateID, String templateName, String authToken);
   bool getConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days);
+  bool getPrevSavedInfo();
+  void setPrevSavedInfo();
 };
 
 #endif //__IRRIGATION_SYSTEM_STORAGE_STORAGE_H__
