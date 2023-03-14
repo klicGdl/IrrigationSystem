@@ -24,12 +24,18 @@
 #include  <stdint.h>
 #include "../../utils/logger.h"
 
-#define TEMPLATE_ID_MAX     20  // Max number of characters
-#define TEMPLATE_NAME_MAX   20
-#define AUTH_TOKEN_MAX      40
-#define TEMPLATE_ID_BASE    0   // base address in bytes
-#define TEMPLATE_NAME_BASE  20
-#define AUTH_TOKEN_BASE     40
+typedef struct {
+  uint8_t templateid [20];
+  uint8_t templateName [20];
+  uint8_t authToken [40];
+  uint8_t padding [20];
+} EEPROM_CredentialStorage_t;
+
+#define SAVED_FLAG_START  sizeof(EEPROM_CredentialStorage_t)
+#define SAVED_FLAG_SIZE   4
+#define SAVED_DATA_FLAG   0x3C
+#define CONF_MEM_START    SAVED_FLAG_START + SAVED_FLAG_SIZE    // leave the first space for credentials and flags
+                                                                // save the conf above this address
 
 
 typedef struct {
@@ -54,6 +60,8 @@ public:
   bool saveConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days);
   bool getCredentials(String templateID, String templateName, String authToken);
   bool getConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days);
+  bool getPrevSavedInfo();
+  void setPrevSavedInfo();
   
 };
 
