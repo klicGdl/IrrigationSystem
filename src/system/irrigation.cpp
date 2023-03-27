@@ -6,6 +6,7 @@
 #include "relays/builder.h"
 
 SysLogger logger(nullptr);
+Storage storage(NVRAM_MAX_RELAYS);
 
 #define doUntilTimeElapsed(__time_handler, __ms_elapsed, __function) \
     static uint32_t __time_handler = 0;                              \

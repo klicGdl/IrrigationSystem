@@ -31,6 +31,7 @@
 #include "utils/storage.h"
 
 #define KERNEL_SERIAL_SPEED 115200
+#define NVRAM_MAX_RELAYS    4
 
 class IrrigationSystem {
     //
@@ -39,7 +40,7 @@ class IrrigationSystem {
     SystemTimeProvider timeProviders;
     IOExpander ioExpander;
     LinkedList<WaterValve*> *relays;
-    Storage storage;
+
     //
     // Private methods
     //

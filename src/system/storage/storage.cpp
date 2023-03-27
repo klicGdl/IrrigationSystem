@@ -18,7 +18,6 @@
 
 #include "storage.h"
 
-
 static String templateId;
 static String templateName;
 static String authToken;
