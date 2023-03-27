@@ -1,5 +1,6 @@
 #include "wifi.h"
 #include "utils/logger.h"
+#include "utils/storage.h"
 
 #define WIFI_MANAGER_PARAMETER_SIZE 20
 
@@ -12,33 +13,22 @@ static String token;
 
 static void setPreSaveConfigCallback()
 {
-    if(wm.server->hasArg("template_id"))
+    if((wm.server->hasArg("template_id")) || (wm.server->hasArg("device_name")) || (wm.server->hasArg("auth_token")))
     {
         templateID = wm.server->arg("template_id");
-        logger << LOG_INFO << "TemplateID = " << templateID << EndLine;
-    }
-    else 
-    {
-        logger << LOG_INFO << "Template ID missing" << EndLine;
-    }
-    if(wm.server->hasArg("device_name"))
-    {
         deviceName = wm.server->arg("device_name");
-        logger << LOG_INFO << "Device Name = " << deviceName << EndLine;
-    }
-    else 
-    {
-        logger << LOG_INFO << "Device Name missing" << EndLine;
-    }
-    if(wm.server->hasArg("auth_token"))
-    {
         token = wm.server->arg("auth_token");
+        logger << LOG_INFO << "TemplateID = " << templateID << EndLine;
+        logger << LOG_INFO << "Device Name = " << deviceName << EndLine;
         logger << LOG_INFO << "Token = " << token << EndLine;
     }
     else 
     {
-        logger << LOG_INFO << "Auth_Token missing" << EndLine;
+        logger << LOG_ERROR << "At least one of the configuration is missing" << EndLine;
     }
+
+    storage.saveCredentials(templateID,deviceName,token);
+    storage.setPrevSavedInfo();
 }
 
 /**
@@ -53,11 +43,18 @@ wl_status_t WiFiConnection::WifiInitialize (
     const char* wifi_password
     )
 {
-    logger << LOG_INFO << "Initializing WiFi provider!" << EndLine;
+    String templ_id = "template_id";
+    String dev_name = "Device_name";
+    String auth_token = "auth_token";
 
-    WiFiManagerParameter templateID("template_id", "TEMPLATE_ID", "template_id",WIFI_MANAGER_PARAMETER_SIZE);
-    WiFiManagerParameter deviceName("device_name", "DEVICE_NAME", "Device_Name", WIFI_MANAGER_PARAMETER_SIZE);
-    WiFiManagerParameter authToken("auth_token", "AUTH_TOKEN", "auth_token", WIFI_MANAGER_PARAMETER_SIZE);
+    logger << LOG_INFO << "Initializing WiFi provider!" << EndLine;
+    if(storage.getPrevSavedInfo()) {
+        storage.getCredentials(templ_id,dev_name,auth_token);
+    }
+    // parameters  = ID, label, default_value, size
+    WiFiManagerParameter templateID("template_id", "TEMPLATE_ID", templ_id.c_str(), WIFI_MANAGER_PARAMETER_SIZE);
+    WiFiManagerParameter deviceName("device_name", "DEVICE_NAME", dev_name.c_str(), WIFI_MANAGER_PARAMETER_SIZE);
+    WiFiManagerParameter authToken("auth_token", "AUTH_TOKEN", auth_token.c_str(), WIFI_MANAGER_PARAMETER_SIZE);
 
     wm.addParameter(&templateID);
     wm.addParameter(&deviceName);
@@ -83,19 +80,5 @@ wl_status_t WiFiConnection::WifiInitialize (
     return WL_CONNECTED;
 }
 
-String WiFiConnection::getDeviceName()
-{
-    return deviceName;
-}
-
-String WiFiConnection::getTemplate()
-{
-    return templateID;
-}
-
-String WiFiConnection::getToken()
-{
-    return token;
-}
 
 

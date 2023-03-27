@@ -30,8 +30,22 @@ Storage::Storage(int _num_relays)
   EEPROM.begin(CONF_MEM_START + (sizeof(eeprom_map_conf_time_t ) * _num_relays));
 }
 
+Storage::Storage()
+{
+
+}
+
 Storage::~Storage()
 {
+
+}
+
+void Storage::init(int _num_relays)
+{
+  this->num_relays = _num_relays;
+  // offset for credentials, plus space requred to save the configuration for each relay
+  EEPROM.begin(CONF_MEM_START + (sizeof(eeprom_map_conf_time_t ) * _num_relays));
+
 }
 
 bool Storage::saveCredentials(String templateID, String templateName, String authToken)
@@ -84,7 +98,7 @@ bool Storage::getConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_
 
 bool Storage::getPrevSavedInfo() 
 {
-  uint8_t isSaved;
+  uint8_t isSaved = 0;
   EEPROM.get(SAVED_FLAG_START, isSaved);
   if (SAVED_DATA_FLAG == isSaved) {
     return true;

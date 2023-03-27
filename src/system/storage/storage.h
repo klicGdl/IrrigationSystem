@@ -55,7 +55,9 @@ private:
   
 public:
   Storage(int _num_relays);
+  Storage();
   ~Storage();
+  void init(int _num_relays);
   bool saveCredentials(String templateID, String templateName, String authToken);
   bool saveConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days);
   bool getCredentials(String templateID, String templateName, String authToken);
