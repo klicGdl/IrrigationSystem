@@ -98,7 +98,7 @@ bool Storage::getConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_
 
 bool Storage::getPrevSavedInfo() 
 {
-  uint8_t isSaved;
+  uint8_t isSaved = 0;
   EEPROM.get(SAVED_FLAG_START, isSaved);
   if (SAVED_DATA_FLAG == isSaved) {
     return true;
