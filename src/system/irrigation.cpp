@@ -102,11 +102,6 @@ void IrrigationSystem::InitDevices()
     }
 }
 
-void IrrigationSystem::InitStorage()
-{
-    storage.init(4);
-}
-
 void IrrigationSystem::InitSensors()
 {
 }

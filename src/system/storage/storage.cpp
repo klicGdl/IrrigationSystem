@@ -46,13 +46,27 @@ void Storage::init(int _num_relays)
   EEPROM.begin(CONF_MEM_START + (sizeof(eeprom_map_conf_time_t ) * _num_relays));
 
 }
-
+/*
+ * Save them in the simulated EEPROM
+ * |------------| 0x0
+ * | templateID |
+ * |------------|
+ * | templ name |
+ * |------------|
+ * | auth_token |
+ * |------------|
+*/
 bool Storage::saveCredentials(String templateID, String templateName, String authToken)
 {
-  EEPROM.put(TEMPLATE_ID_BASE,templateID);
-  EEPROM.put(TEMPLATE_NAME_BASE, templateName);
-  EEPROM.put(AUTH_TOKEN_BASE, authToken);
+  EEPROM_CredentialStorage_t d;
+  strcpy(d._templateid,templateID.c_str());
+  strcpy(d._templateName,templateName.c_str());
+  strcpy(d._authToken,authToken.c_str());
+  EEPROM.put(offsetof(EEPROM_CredentialStorage_t, _templateid),d);
+
   EEPROM.commit();
+  logger << LOG_INFO << "Credentials saved" << EndLine;
+
   return true;
 }
 
@@ -72,14 +86,21 @@ bool Storage::saveConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8
 
 bool Storage::getCredentials(String templateID, String templateName, String authToken)
 {
-  EEPROM.get(TEMPLATE_ID_BASE,templateID);
-  EEPROM.get(TEMPLATE_NAME_BASE,templateName);
-  EEPROM.get(AUTH_TOKEN_BASE,authToken);
+  EEPROM_CredentialStorage_t d;
+  // Check if info was saved previously, if not return empty strings
+  if(getPrevSavedInfo()) {
+    // Credentials are on the bottom of the reserved memory, use address 0
+    EEPROM.get(0,d);
+    templateID = d._templateid;
+    templateName = d._templateName;
+    authToken = d._authToken;
 
-  logger << LOG_INFO << "templateID " << templateID << EndLine;
-  logger << LOG_INFO << "templateName " << templateName << EndLine;
-  logger << LOG_INFO << "authToken " << authToken << EndLine;
-
+    logger << LOG_INFO << "templateID " << templateID << EndLine;
+    logger << LOG_INFO << "templateName " << templateName << EndLine;
+    logger << LOG_INFO << "authToken " << authToken << EndLine;
+  } else {
+    templateID = templateName = authToken = "";
+  }
   return true;
 }
 
@@ -99,6 +120,7 @@ bool Storage::getPrevSavedInfo()
 {
   uint8_t isSaved = 0;
   EEPROM.get(SAVED_FLAG_START, isSaved);
+  logger << LOG_INFO << "Checking saved flag = " << INT_HEX << isSaved << EndLine;
   if (SAVED_DATA_FLAG == isSaved) {
     return true;
   }
@@ -108,4 +130,5 @@ bool Storage::getPrevSavedInfo()
 void Storage::setPrevSavedInfo() 
 {
   EEPROM.put(SAVED_FLAG_START,SAVED_DATA_FLAG);
+  logger << LOG_INFO << "Setting saved flag - " << INT_HEX << SAVED_DATA_FLAG << EndLine; 
 }

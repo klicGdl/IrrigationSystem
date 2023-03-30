@@ -40,7 +40,6 @@ class IrrigationSystem {
     SystemTimeProvider timeProviders;
     IOExpander ioExpander;
     LinkedList<WaterValve*> *relays;
-
     //
     // Private methods
     //
@@ -50,7 +49,6 @@ class IrrigationSystem {
     void InitDevices();
     void InitSensors();
     void InitRelays();
-    void InitStorage();
     void ConfigureTimeProviders();
 
     void ScanI2CDevicesAndDumpTable();

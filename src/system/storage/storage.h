@@ -24,11 +24,15 @@
 #include  <stdint.h>
 #include "../../utils/logger.h"
 
+#define TEMPLATE_ID_SIZE    20
+#define TEMPLATE_NAME_SIZE  20
+#define AUTH_TOKEN_SIZE     40
+#define PADDING             20
 typedef struct {
-  uint8_t templateid [20];
-  uint8_t templateName [20];
-  uint8_t authToken [40];
-  uint8_t padding [20];
+  char _templateid [TEMPLATE_ID_SIZE];
+  char _templateName [TEMPLATE_NAME_SIZE];
+  char _authToken [AUTH_TOKEN_SIZE];
+  char _padding [PADDING];
 } EEPROM_CredentialStorage_t;
 
 #define SAVED_FLAG_START  sizeof(EEPROM_CredentialStorage_t)
