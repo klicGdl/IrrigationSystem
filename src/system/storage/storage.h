@@ -58,7 +58,6 @@ private:
   size_t startAddress;
 
 public:
-  Storage(int _num_relays);
   Storage();
   ~Storage();
   void init(int _num_relays);

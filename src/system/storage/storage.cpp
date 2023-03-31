@@ -17,17 +17,11 @@
  * ---------------------------------------------------------------------*/
 
 #include "storage.h"
+#include "utils/mem.h"
 
 static String templateId;
 static String templateName;
 static String authToken;
-
-Storage::Storage(int _num_relays)
-{
-  this->num_relays = _num_relays;
-  // offset for credentials, plus space requred to save the configuration for each relay
-  EEPROM.begin(CONF_MEM_START + (sizeof(eeprom_map_conf_time_t) * _num_relays));
-}
 
 Storage::Storage()
 {
@@ -44,6 +38,12 @@ void Storage::init(int _num_relays)
   allocatedMemory = CONF_MEM_START + (sizeof(eeprom_map_conf_time_t) * _num_relays);
   startAddress = 0;
   EEPROM.begin(allocatedMemory);
+  
+  for (size_t address = startAddress; address < allocatedMemory; address++)
+  {
+    EEPROM.write(address, 0x00);
+  }
+  EEPROM.commit();
 }
 /*
  * Save them in the simulated EEPROM
@@ -149,7 +149,7 @@ void Storage::dumpEEPROMValues()
   {
     uint8_t data = EEPROM.read(address);
 
-    if (address % 16 == 0)
+    if (address > 0 && address % 16 == 0)
     {
       row += 0x10;
       sprintf(buffer, "%02X", row);
