@@ -35,11 +35,8 @@ bool IrrigationSystem::init()
 
     logger << LOG_INFO << "Initializing System..." << EndLine;
     storage.init(NVRAM_MAX_RELAYS);
-    logger << LOG_INFO << " Before writing" << EndLine;
     storage.dumpEEPROMValues();
     InitWifi();
-    logger << LOG_INFO << " After writing" << EndLine;
-    storage.dumpEEPROMValues();
     ScanI2CDevicesAndDumpTable();
     InitDevices();
     ConfigureTimeProviders();

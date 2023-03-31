@@ -38,8 +38,8 @@ void Storage::init(int _num_relays)
   allocatedMemory = CONF_MEM_START + (sizeof(eeprom_map_conf_time_t) * _num_relays);
   startAddress = 0;
   EEPROM.begin(allocatedMemory);
-  
-  for (size_t address = startAddress; address < allocatedMemory; address++)
+  // Clean up the EEPROM space if there was no information saved previously
+  for (size_t address = startAddress; address < allocatedMemory && !getPrevSavedInfo(); address++)
   {
     EEPROM.write(address, 0x00);
   }
@@ -58,6 +58,7 @@ void Storage::init(int _num_relays)
 bool Storage::saveCredentials(String templateID, String templateName, String authToken)
 {
   EEPROM_CredentialStorage_t d;
+  ZeroMem(&d,sizeof(EEPROM_CredentialStorage_t));
   strcpy(d._templateid, templateID.c_str());
   strcpy(d._templateName, templateName.c_str());
   strcpy(d._authToken, authToken.c_str());
@@ -140,7 +141,7 @@ void Storage::setPrevSavedInfo()
 void Storage::dumpEEPROMValues()
 {
   logger << LOG_INFO << F("Dumping EEPROM Data") << EndLine;
-  logger << LOG_INFO << F("       0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F") << EndLine;
+  logger << LOG_INFO << F("       0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F 10 11 12 13") << EndLine;
   logger << LOG_INFO << F("  00: ");
   size_t row = 0;
   char buffer[3];
@@ -149,9 +150,9 @@ void Storage::dumpEEPROMValues()
   {
     uint8_t data = EEPROM.read(address);
 
-    if (address > 0 && address % 16 == 0)
+    if (address > 0 && address % 20 == 0)
     {
-      row += 0x10;
+      row += 0x14;
       sprintf(buffer, "%02X", row);
       logger << EndLine << LOG_INFO << F("  ") << buffer << F(": ");
     }
