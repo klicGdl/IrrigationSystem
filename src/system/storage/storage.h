@@ -54,7 +54,9 @@ class Storage
 private:
   int num_relays;
   eeprom_map_conf_time_t relayConfigTime;
-  
+  size_t allocatedMemory;
+  size_t startAddress;
+
 public:
   Storage(int _num_relays);
   Storage();
@@ -66,6 +68,8 @@ public:
   bool getConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days);
   bool getPrevSavedInfo();
   void setPrevSavedInfo();
+
+  void dumpEEPROMValues();
 };
 
 #endif //__IRRIGATION_SYSTEM_STORAGE_STORAGE_H__

@@ -35,6 +35,7 @@ bool IrrigationSystem::init()
 
     logger << LOG_INFO << "Initializing System..." << EndLine;
     InitWifi();
+    storage.dumpEEPROMValues();
     ScanI2CDevicesAndDumpTable();
     InitDevices();
     ConfigureTimeProviders();
