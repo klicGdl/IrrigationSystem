@@ -21,7 +21,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <stddef.h>
-#include  <stdint.h>
+#include <stdint.h>
 #include "../../utils/logger.h"
 
 #define TEMPLATE_ID_SIZE    20
