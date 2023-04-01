@@ -42,6 +42,7 @@ bool IrrigationSystem::init()
     ConfigureTimeProviders();
     InitSensors();
     InitRelays();
+    InitDisplay();
     logger << LOG_INFO << "Initialization finished!" << EndLine;
 
     return IsSystemInitializedAtMinimal();
@@ -56,6 +57,7 @@ void IrrigationSystem::run()
         doUntilTimeElapsed(__update_rtc_handler, 1000, {
             timeProviders.update();
             logger << LOG_INFO << "Now:  " << timeProviders.get().toString() << EndLine;
+            display.update(timeProviders.get().toString());
             WaterValve *relay = NULL;
             for (int i = 0; i < relays->size(); i++)
             {
@@ -196,4 +198,12 @@ bool IrrigationSystem::IsSystemInitializedAtMinimal()
     }
 
     return true;
+}
+
+void IrrigationSystem::InitDisplay()
+{
+    if (!display.init(0x3C))
+    {
+        logger << LOG_ERROR << "Can't initialize Display" << EndLine;
+    }
 }

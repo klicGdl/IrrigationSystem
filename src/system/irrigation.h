@@ -29,6 +29,7 @@
 #include "system/connectivity/wifi.h"
 #include "time/controller.hpp"
 #include "utils/storage.h"
+#include "system/display/display.h"
 
 #define KERNEL_SERIAL_SPEED 115200
 #define NVRAM_MAX_RELAYS    4
@@ -39,6 +40,7 @@ class IrrigationSystem {
     //
     SystemTimeProvider timeProviders;
     IOExpander ioExpander;
+    Display display;
     LinkedList<WaterValve*> *relays;
     //
     // Private methods
@@ -49,6 +51,7 @@ class IrrigationSystem {
     void InitDevices();
     void InitSensors();
     void InitRelays();
+    void InitDisplay();
     void ConfigureTimeProviders();
 
     void ScanI2CDevicesAndDumpTable();
