@@ -14,8 +14,7 @@ static String token;
 
 static void saveConfigCallback()
 {
-    logger << LOG_INFO << "Callback called" << EndLine; //REMOVE
-    if((wm.server->hasArg("template_id")) || (wm.server->hasArg("device_name")) || (wm.server->hasArg("auth_token")))
+    if((wm.server->hasArg("template_id")) && (wm.server->hasArg("device_name")) && (wm.server->hasArg("auth_token")))
     {
         templateID = wm.server->arg("template_id");
         deviceName = wm.server->arg("device_name");

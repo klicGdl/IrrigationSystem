@@ -102,7 +102,10 @@ bool Storage::getCredentials(String templateID, String templateName, String auth
   }
   else
   {
-    templateID = templateName = authToken = "";
+    // if not saved credentials previously, left the parameters clean
+    templateID = "";
+    templateName = "";
+    authToken = "";
   }
   return true;
 }
@@ -124,11 +127,7 @@ bool Storage::getPrevSavedInfo()
   uint8_t isSaved = 0;
   EEPROM.get(SAVED_FLAG_START, isSaved);
   logger << LOG_INFO << "Checking saved flag = " << INT_HEX << isSaved << EndLine;
-  if (SAVED_DATA_FLAG == isSaved)
-  {
-    return true;
-  }
-  return false;
+  return (SAVED_DATA_FLAG == isSaved);
 }
 
 void Storage::setPrevSavedInfo()
