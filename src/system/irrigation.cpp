@@ -5,6 +5,7 @@
 #include "connectivity/wifi.h"
 #include "relays/builder.h"
 #include "utils/logger.h"
+#include "system/connectivity/blynk.h"
 
 SysLogger logger(nullptr);
 Storage storage;
@@ -39,6 +40,7 @@ bool IrrigationSystem::init() {
   InitSensors();
   InitRelays();
   InitDisplay();
+  InitBlynk();
   logger << LOG_INFO << "Initialization finished!" << EndLine;
 
   return IsSystemInitializedAtMinimal();
@@ -47,6 +49,7 @@ bool IrrigationSystem::init() {
 void IrrigationSystem::run() {
   while (true) {
     Status.sysMilliseconds = millis();
+    KlicBlynk::run();
 
     doUntilTimeElapsed(__update_rtc_handler, 1000, {
       timeProviders.update();
@@ -196,4 +199,13 @@ void IrrigationSystem::ConfigureNVRAM() {
   logger << LOG_INFO << "Initializing NVRAM Storage" << EndLine;
   storage.init(NVRAM_MAX_RELAYS);
   storage.dumpEEPROMValues();
+}
+
+void IrrigationSystem::InitBlynk() {
+  String t;
+  logger << LOG_INFO << "Starting blynk" << EndLine;
+  t = storage.getToken();
+  char *token = new char[t.length() + 1];
+  strcpy(token, t.c_str());
+  KlicBlynk::init(token);
 }
