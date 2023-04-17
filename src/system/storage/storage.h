@@ -25,13 +25,13 @@
 
 #include "../../utils/logger.h"
 
-#define TEMPLATE_ID_SIZE 20
-#define TEMPLATE_NAME_SIZE 20
+#define ID_SIZE 10
+#define TELEGRAM_TOKEN_SIZE 48
 #define AUTH_TOKEN_SIZE 40
-#define PADDING 20
+#define PADDING 2
 typedef struct {
-  char _templateid[TEMPLATE_ID_SIZE];
-  char _templateName[TEMPLATE_NAME_SIZE];
+  char _chatid[ID_SIZE];
+  char _telegramToken[TELEGRAM_TOKEN_SIZE];
   char _authToken[AUTH_TOKEN_SIZE];
   char _padding[PADDING];
 } EEPROM_CredentialStorage_t;

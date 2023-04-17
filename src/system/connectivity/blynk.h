@@ -55,6 +55,8 @@ namespace KlicBlynk
 {
   void init(const char *_auth);
   void run();
+  void showStatus(int r, bool s);
+
 }
 
 #endif // __SYSTEM_CONNECTIVITY_BLYNK_H__

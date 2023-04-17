@@ -28,6 +28,37 @@ void KlicBlynk::run()
   Blynk.run();
 }
 
+void KlicBlynk::showStatus(int r,bool s)
+{
+  switch(r)
+  {
+    case 0: //turn on relay 1
+      Blynk.virtualWrite(V7,s);
+      Blynk.virtualWrite(V8,0);
+      Blynk.virtualWrite(V9,0);
+      break;
+    case 1:
+      Blynk.virtualWrite(V7,0);
+      Blynk.virtualWrite(V8,s);
+      Blynk.virtualWrite(V9,0);
+      break;
+    case 2:
+      Blynk.virtualWrite(V7,s);
+      Blynk.virtualWrite(V8,s);
+      Blynk.virtualWrite(V9,0);
+      break;
+    case 3:
+      Blynk.virtualWrite(V7,0);
+      Blynk.virtualWrite(V8,0);
+      Blynk.virtualWrite(V9,s);
+      break;
+    default:
+      Blynk.virtualWrite(V7,0);
+      Blynk.virtualWrite(V8,0);
+      Blynk.virtualWrite(V9,0);
+  }
+}
+
 dev_conf_t getConfFromMem(uint8_t _relay)
 {
   dev_conf_t t;
@@ -56,7 +87,7 @@ void updateScreen(dev_conf_t t)
 BLYNK_CONNECTED()
 {
   // set relay 1 enable
-  Blynk.virtualWrite(V0,0);
+  Blynk.virtualWrite(V0,1);
   // Update the screen with values for relay 1
   temp_inf = getConfFromMem(RELAY1);
   updateScreen(temp_inf);
@@ -84,11 +115,11 @@ BLYNK_WRITE_DEFAULT()
 BLYNK_WRITE(V0)
 {
   // 0 = RELAY1, ...
-  temp_relay = param.asInt();
+  temp_relay = param.asInt() - 1; // use 1 to 4 in the GUI
   // update the screen with current values
   temp_inf = getConfFromMem(temp_relay);
   updateScreen(temp_inf);
-  logger << LOG_INFO << "loading conf for relay" << temp_relay + 1 << " " << temp_inf.data << EndLine;
+  logger << LOG_INFO << "loading conf for relay" << temp_relay  << " " << temp_inf.data << EndLine;
 }
 
 // Odd days: Monday, Wednesday, Friday, Sunday
@@ -98,7 +129,7 @@ BLYNK_WRITE(V5)
     temp_inf.data |= 0x55;
   }
   else {
-    temp_inf.data &= 0x2A;
+    temp_inf.data &= 0xFFFFFF2A;
   }
 }
 
@@ -109,7 +140,7 @@ BLYNK_WRITE(V6)
     temp_inf.data |= 0x2A;
   }
   else {
-    temp_inf.data &= 0x55;
+    temp_inf.data &= 0xFFFFFF55;
   }
 }
 

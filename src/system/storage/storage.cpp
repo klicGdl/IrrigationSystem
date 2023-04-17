@@ -53,10 +53,10 @@ void Storage::init(int _num_relays) {
 bool Storage::saveCredentials(String templateID, String templateName, String authToken) {
   EEPROM_CredentialStorage_t d;
   ZeroMem(&d, sizeof(EEPROM_CredentialStorage_t));
-  strcpy(d._templateid, templateID.c_str());
-  strcpy(d._templateName, templateName.c_str());
+  strcpy(d._chatid, templateID.c_str());
+  strcpy(d._telegramToken, templateName.c_str());
   strcpy(d._authToken, authToken.c_str());
-  EEPROM.put(offsetof(EEPROM_CredentialStorage_t, _templateid), d);
+  EEPROM.put(offsetof(EEPROM_CredentialStorage_t, _chatid), d);
 
   EEPROM.commit();
   logger << LOG_INFO << "Credentials saved" << EndLine;
@@ -77,23 +77,23 @@ bool Storage::saveConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8
   return true;
 }
 
-bool Storage::getCredentials(String templateID, String templateName, String authToken) {
+bool Storage::getCredentials(String chatId, String telegramToken, String authToken) {
   EEPROM_CredentialStorage_t d;
   // Check if info was saved previously, if not return empty strings
   if (getPrevSavedInfo()) {
     // Credentials are on the bottom of the reserved memory, use address 0
     EEPROM.get(0, d);
-    templateID = d._templateid;
-    templateName = d._templateName;
+    chatId = d._chatid;
+    telegramToken = d._telegramToken;
     authToken = d._authToken;
 
-    logger << LOG_DEBUG << "templateID " << templateID << EndLine;
-    logger << LOG_DEBUG << "templateName " << templateName << EndLine;
+    logger << LOG_DEBUG << "chatId " << chatId << EndLine;
+    logger << LOG_DEBUG << "telegramToken " << telegramToken << EndLine;
     logger << LOG_DEBUG << "authToken " << authToken << EndLine;
   } else {
     // if not saved credentials previously, left the parameters clean
-    templateID = "";
-    templateName = "";
+    chatId = "";
+    telegramToken = "";
     authToken = "";
   }
   return true;
