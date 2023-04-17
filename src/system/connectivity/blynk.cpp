@@ -129,7 +129,7 @@ BLYNK_WRITE(V5)
     temp_inf.data |= 0x55;
   }
   else {
-    temp_inf.data &= 0xFFFFFF2A;
+    temp_inf.data &= 0xFFFFFFAB;
   }
 }
 
@@ -140,7 +140,7 @@ BLYNK_WRITE(V6)
     temp_inf.data |= 0x2A;
   }
   else {
-    temp_inf.data &= 0xFFFFFF55;
+    temp_inf.data &= 0xFFFFFFDA;
   }
 }
 
