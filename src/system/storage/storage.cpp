@@ -64,7 +64,7 @@ bool Storage::saveCredentials(String templateID, String templateName, String aut
   return true;
 }
 
-bool Storage::saveConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days) {
+bool Storage::saveConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint32_t duration, uint8_t days) {
   relayConfigTime.hour = hour;
   relayConfigTime.min = minute;
   relayConfigTime.sec = second;

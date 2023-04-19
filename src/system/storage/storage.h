@@ -42,13 +42,15 @@ typedef struct {
 #define CONF_MEM_START SAVED_FLAG_START + SAVED_FLAG_SIZE  // leave the first space for credentials and flags
                                                            // save the conf above this address
 
+#pragma pack(push, 1)
 typedef struct {
   uint8_t hour;
   uint8_t min;
   uint8_t sec;
-  uint8_t duration;
+  uint32_t duration;
   uint8_t days;
 } eeprom_map_conf_time_t;
+#pragma pack(pop)
 
 class Storage {
  private:
@@ -62,7 +64,7 @@ class Storage {
   ~Storage();
   void init(int _num_relays);
   bool saveCredentials(String templateID, String templateName, String authToken);
-  bool saveConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint8_t duration, uint8_t days);
+  bool saveConfiguration(int relayID, uint8_t hour, uint8_t minute, uint8_t second, uint32_t duration, uint8_t days);
   bool getCredentials(String templateID, String templateName, String authToken);
   bool getPrevSavedInfo();
   void setPrevSavedInfo();
