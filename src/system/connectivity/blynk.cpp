@@ -126,10 +126,10 @@ BLYNK_WRITE(V0)
 BLYNK_WRITE(V5)
 {
   if (param.asInt()) {
-    temp_inf.data |= 0x55;
+    temp_inf.data |= 0x2B;
   }
   else {
-    temp_inf.data &= 0xFFFFFFAB;
+    temp_inf.data &= 0xFFFFFFD4;
   }
 }
 
@@ -137,10 +137,10 @@ BLYNK_WRITE(V5)
 BLYNK_WRITE(V6)
 {
   if (param.asInt()) {
-    temp_inf.data |= 0x2A;
+    temp_inf.data |= 0x54;
   }
   else {
-    temp_inf.data &= 0xFFFFFFDA;
+    temp_inf.data &= 0xFFFFFFAB;
   }
 }
 
