@@ -29,19 +29,21 @@
 #define RELAY3 2
 #define RELAY4 3
 
+#define SECONDS_IN_A_MINUTE 60
+
 #pragma pack(push, 1)
 typedef union
 {
   struct
   {
-    uint32_t lunes : 1;
-    uint32_t martes : 1;
-    uint32_t miercoles : 1;
-    uint32_t jueves : 1;
-    uint32_t viernes : 1;
-    uint32_t sabado : 1;
-    uint32_t domingo : 1;
-    uint32_t hora : 5;
+    uint32_t monday : 1;
+    uint32_t tuesday : 1;
+    uint32_t wednesday : 1;
+    uint32_t thursday : 1;
+    uint32_t friday : 1;
+    uint32_t saturday : 1;
+    uint32_t sunday : 1;
+    uint32_t hour : 5;
     uint32_t min : 6;
     uint32_t duration : 11;
     uint32_t _ : 3;
@@ -56,7 +58,6 @@ namespace KlicBlynk
   void init(const char *_auth);
   void run();
   void showStatus(int r, bool s);
-
 }
 
 #endif // __SYSTEM_CONNECTIVITY_BLYNK_H__

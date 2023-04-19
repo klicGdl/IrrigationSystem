@@ -10,13 +10,13 @@ void WaterValve::set_config(IORelayConfig_t new_config)
 
 void WaterValve::update()
 {
-    eeprom_map_conf_time_t new_conf;
+  eeprom_map_conf_time_t new_conf;
   if (device == NULL)
   {
     logger << LOG_ERROR << "Device pointer is NULL" << EndLine;
     return;
   }
-
+  // TODO: this need to refactore it
   new_conf = storage.getConfiguration(this->position);
   config.timeToTurnOn = Time_s(0, 0, 0, new_conf.hour, new_conf.min, new_conf.sec);
   config.WeekDaysToTurnOn.Data = new_conf.days;
@@ -87,7 +87,7 @@ void WaterValve::turnOffRelay()
   {
     logger << LOG_DEBUG << " Calling Voltage Relay in pos " << config.voltageRelay->getPosition() << EndLine;
     config.voltageRelay->turn_off();
-    KlicBlynk::showStatus(position,false);
+    KlicBlynk::showStatus(position, false);
   };
 }
 
@@ -102,5 +102,5 @@ void WaterValve::turnOnRelay()
   };
   logger << LOG_INFO << "Turning on relay " << (uint8_t)position << " on IO addr 0x" << INT_HEX << device->getAddress() << EndLine;
   this->turn_on();
-  KlicBlynk::showStatus(position,true);
+  KlicBlynk::showStatus(position, true);
 }

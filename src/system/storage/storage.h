@@ -25,12 +25,13 @@
 
 #include "../../utils/logger.h"
 
-#define ID_SIZE 10
+#define CHAT_ID_SIZE 10
 #define TELEGRAM_TOKEN_SIZE 48
 #define AUTH_TOKEN_SIZE 40
 #define PADDING 2
-typedef struct {
-  char _chatid[ID_SIZE];
+typedef struct
+{
+  char _chatid[CHAT_ID_SIZE];
   char _telegramToken[TELEGRAM_TOKEN_SIZE];
   char _authToken[AUTH_TOKEN_SIZE];
   char _padding[PADDING];
@@ -39,8 +40,8 @@ typedef struct {
 #define SAVED_FLAG_START sizeof(EEPROM_CredentialStorage_t)
 #define SAVED_FLAG_SIZE 4
 #define SAVED_DATA_FLAG 0x3C
-#define CONF_MEM_START SAVED_FLAG_START + SAVED_FLAG_SIZE  // leave the first space for credentials and flags
-                                                           // save the conf above this address
+#define CONF_MEM_START SAVED_FLAG_START + SAVED_FLAG_SIZE // leave the first space for credentials and flags
+                                                          // save the conf above this address
 
 #pragma pack(push, 1)
 typedef struct {
@@ -52,14 +53,15 @@ typedef struct {
 } eeprom_map_conf_time_t;
 #pragma pack(pop)
 
-class Storage {
- private:
+class Storage
+{
+private:
   int num_relays;
   eeprom_map_conf_time_t relayConfigTime;
   size_t allocatedMemory;
   size_t startAddress;
 
- public:
+public:
   Storage();
   ~Storage();
   void init(int _num_relays);
@@ -74,4 +76,4 @@ class Storage {
   void dumpEEPROMValues();
 };
 
-#endif  //__IRRIGATION_SYSTEM_STORAGE_STORAGE_H__
+#endif //__IRRIGATION_SYSTEM_STORAGE_STORAGE_H__

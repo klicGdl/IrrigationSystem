@@ -2,7 +2,7 @@
 #include "utils/logger.h"
 #include "utils/storage.h"
 
-#define WIFI_MANAGER_PARAMETER_SIZE 10
+#define WIFI_MANAGER_CHATID_SIZE    10
 #define WIFI_MANAGER_AUTHTOKEN_SIZE 40
 #define WIFI_TELEGRAM_TOKEN_SIZE    48
 
@@ -47,13 +47,15 @@ wl_status_t WiFiConnection::WifiInitialize (
     const char* wifi_password
     )
 {
-    String chat_id,telegram_token, auth_token = "";
+    String chat_id = "";
+    String telegram_token = "";
+    String auth_token = "";
     // if there was not saved information, will return clean strings
     storage.getCredentials(chat_id,telegram_token,auth_token);
 
     logger << LOG_INFO << "Initializing WiFi provider!" << EndLine;
     // parameters  = ID, label, default_value, size
-    WiFiManagerParameter chatId("chat_id", "CHAT_ID", chat_id.c_str(), WIFI_MANAGER_PARAMETER_SIZE);
+    WiFiManagerParameter chatId("chat_id", "CHAT_ID", chat_id.c_str(), WIFI_MANAGER_CHATID_SIZE);
     WiFiManagerParameter telegramToken("telegram_token", "TELEGRAM_TOKEN", telegram_token.c_str(), WIFI_TELEGRAM_TOKEN_SIZE);
     WiFiManagerParameter authToken("auth_token", "AUTH_TOKEN", auth_token.c_str(), WIFI_MANAGER_AUTHTOKEN_SIZE);
 
@@ -72,7 +74,9 @@ wl_status_t WiFiConnection::WifiInitialize (
         // if the credentials were not set, reset all wifi configuration
         wm.resetSettings();
     }
-    //wm.resetSettings();
+#if RESET_WIFI
+    wm.resetSettings();
+#endif
     // Set the ESP as AccesPoint
     WiFi.mode(WIFI_STA);
 
