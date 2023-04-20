@@ -32,7 +32,6 @@ class SystemTimeProvider : public ITimeProvider {
 
   bool init() {
     bool success = true;
-    uint8_t index = 0;
     logger << LOG_INFO << "Initializing Time Providers" << EndLine;
     _for_each(providers, _tp, ITimeProvider *) {
       bool success = _tp->init();
@@ -40,12 +39,13 @@ class SystemTimeProvider : public ITimeProvider {
       if (success) {
         logger << LOG_INFO << "  - Init " << _tp->getTypeName()
                << LOGGER_TEXT_GREEN << " Success" << EndLine;
-        index++;
       } else {
         success = false;
         logger << LOG_ERROR << "  - Init " << _tp->getTypeName()
                << LOGGER_TEXT_RED << " Failure!" << EndLine;
-        providers.remove(index);
+        providers.remove(i);
+        delete _tp;
+        i--;
       }
     }
     return success;
