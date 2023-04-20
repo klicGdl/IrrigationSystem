@@ -19,7 +19,7 @@ class SystemTimeProvider : public ITimeProvider {
   template <typename Tprovider>
   bool TryToRegisterTimeProvider() {
     Tprovider *p = new Tprovider();
-    providers.add({p, 0});
+    providers.add({p, 1});
     return true;
   }
 
@@ -42,9 +42,10 @@ class SystemTimeProvider : public ITimeProvider {
       bool success = _tp.provider->init();
 
       if (success) {
-        logger << LOG_INFO << "  - Init " << _tp.provider->getTypeName()
-               << LOGGER_TEXT_GREEN << " Success" << EndLine;
         _tp.timeUntilUpdate = _tp.provider->getSecondsThreshold();
+        logger << LOG_INFO << "  - Init " << _tp.provider->getTypeName()
+               << LOGGER_TEXT_GREEN << " Success" << EndLine
+               << "    Updating each " << _tp.timeUntilUpdate << EndLine;
       } else {
         success = false;
         logger << LOG_ERROR << "  - Init " << _tp.provider->getTypeName()
