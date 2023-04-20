@@ -6,7 +6,12 @@
 #include "utils/logger.h"
 
 class SystemTimeProvider : public ITimeProvider {
-  LinkedList<ITimeProvider *> providers;
+  struct ProviderUpdateEvents {
+    ITimeProvider *provider;
+    uint32_t timeUntilUpdate;
+  };
+
+  LinkedList<ProviderUpdateEvents> providers;
 
  public:
   SystemTimeProvider() : providers() {}
@@ -14,7 +19,7 @@ class SystemTimeProvider : public ITimeProvider {
   template <typename Tprovider>
   bool TryToRegisterTimeProvider() {
     Tprovider *p = new Tprovider();
-    providers.add(p);
+    providers.add({p, 0});
     return true;
   }
 
@@ -24,8 +29,8 @@ class SystemTimeProvider : public ITimeProvider {
 
   const LinkedList<const char *> getNames() {
     LinkedList<const char *> names;
-    _for_each(providers, _tp, ITimeProvider *) {
-      names.add(_tp->getTypeName());
+    _for_each(providers, _tp, ProviderUpdateEvents) {
+      names.add(_tp.provider->getTypeName());
     }
     return names;
   }
@@ -33,18 +38,19 @@ class SystemTimeProvider : public ITimeProvider {
   bool init() {
     bool success = true;
     logger << LOG_INFO << "Initializing Time Providers" << EndLine;
-    _for_each(providers, _tp, ITimeProvider *) {
-      bool success = _tp->init();
+    _for_each(providers, _tp, ProviderUpdateEvents) {
+      bool success = _tp.provider->init();
 
       if (success) {
-        logger << LOG_INFO << "  - Init " << _tp->getTypeName()
+        logger << LOG_INFO << "  - Init " << _tp.provider->getTypeName()
                << LOGGER_TEXT_GREEN << " Success" << EndLine;
+        _tp.timeUntilUpdate = _tp.provider->getSecondsThreshold();
       } else {
         success = false;
-        logger << LOG_ERROR << "  - Init " << _tp->getTypeName()
+        logger << LOG_ERROR << "  - Init " << _tp.provider->getTypeName()
                << LOGGER_TEXT_RED << " Failure!" << EndLine;
         providers.remove(i);
-        delete _tp;
+        delete _tp.provider;
         i--;
       }
     }
@@ -61,37 +67,45 @@ class SystemTimeProvider : public ITimeProvider {
     return true;
   }
 
-private:
+ private:
   DateTime getLatestDateTimeFromAllSources() {
     DateTime now = DateTime(SECONDS_FROM_1970_TO_2000);
-    _for_each(providers, _tp, ITimeProvider *) {
-      logger << LOG_DEBUG << "Updating " << _tp->getTypeName() << EndLine;
-      bool status = _tp->update();
-      if (status) {
-        logger << LOG_DEBUG << LOGGER_TEXT_GREEN << "Success!" << EndLine;
-        DateTime d = _tp->get().toDateTime();
-        if (now <= d) {
-          now = d;
-        }
-        if (_tp->getType() == PRIMARY) {
-          return now;
+    _for_each(providers, _tp, ProviderUpdateEvents) {
+      logger << LOG_DEBUG << "Updating " << _tp.provider->getTypeName() << EndLine;
+      _tp.timeUntilUpdate--;
+      if (_tp.timeUntilUpdate == 0) {
+        bool status = _tp.provider->update();
+        _tp.timeUntilUpdate = _tp.provider->getSecondsThreshold();
+        if (status) {
+          logger << LOG_DEBUG << LOGGER_TEXT_GREEN << "Success!" << EndLine;
+          DateTime d = _tp.provider->get().toDateTime();
+          if (now <= d) {
+            now = d;
+          }
+          if (_tp.provider->getType() == PRIMARY) {
+            return now;
+          }
+        } else {
+          logger << LOG_ERROR << "Error while updating time provider!" << EndLine;
         }
       } else {
-        logger << LOG_ERROR << "Error while updating time provider!" << EndLine;
+        logger << LOG_DEBUG << "  In " << _tp.timeUntilUpdate << "s" << EndLine;
       }
     }
     return now;
   }
 
-  void updateBackupSourcesWithDateTime(DateTime& dateTime) {
-    logger << LOG_DEBUG << "Set backups with time " << Time_s(dateTime).toString() << EndLine;
+  void updateBackupSourcesWithDateTime(DateTime &dateTime) {
+    logger << LOG_DEBUG << "Set backups with time "
+           << Time_s(dateTime).toString() << EndLine;
 
-    _for_each(providers, _tp, ITimeProvider *) {
-      if (_tp->getType() != BACKUP) {
+    _for_each(providers, _tp, ProviderUpdateEvents) {
+      if (_tp.provider->getType() != BACKUP) {
         continue;
       }
-      logger << LOG_DEBUG << LOGGER_TEXT_GREEN << " Backup provider " << _tp->getTypeName() << EndLine;
-      _tp->set(dateTime);
+      logger << LOG_DEBUG << LOGGER_TEXT_GREEN << " Backup provider "
+             << _tp.provider->getTypeName() << EndLine;
+      _tp.provider->set(dateTime);
     }
   }
 };
