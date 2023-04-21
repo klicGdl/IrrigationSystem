@@ -71,7 +71,7 @@ class SystemTimeProvider : public ITimeProvider {
  private:
   DateTime getLatestDateTimeFromAllSources() {
     DateTime now = DateTime(SECONDS_FROM_1970_TO_2000);
-    _for_each(providers, _tp, ProviderUpdateEvents) {
+    _for_each_r(providers, _tp, ProviderUpdateEvents) {
       logger << LOG_DEBUG << "Updating " << _tp.provider->getTypeName() << EndLine;
       _tp.timeUntilUpdate--;
       if (_tp.timeUntilUpdate == 0) {
@@ -100,7 +100,7 @@ class SystemTimeProvider : public ITimeProvider {
     logger << LOG_DEBUG << "Set backups with time "
            << Time_s(dateTime).toString() << EndLine;
 
-    _for_each(providers, _tp, ProviderUpdateEvents) {
+    _for_each_r(providers, _tp, ProviderUpdateEvents) {
       if (_tp.provider->getType() != BACKUP) {
         continue;
       }
