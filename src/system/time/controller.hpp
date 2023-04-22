@@ -38,23 +38,25 @@ class SystemTimeProvider : public ITimeProvider {
   bool init() {
     bool success = true;
     logger << LOG_INFO << "Initializing Time Providers" << EndLine;
-    _for_each(providers, _tp, ProviderUpdateEvents) {
+    _for_each_r(providers, _tp, ProviderUpdateEvents) {
       bool success = _tp.provider->init();
 
-      if (success) {
-        _tp.timeUntilUpdate = _tp.provider->getSecondsThreshold();
-        logger << LOG_INFO << "  - Init " << _tp.provider->getTypeName()
-               << LOGGER_TEXT_GREEN << " Success" << EndLine
-               << "    Updating each " << _tp.timeUntilUpdate << EndLine;
-      } else {
+      if (!success) {
         success = false;
         logger << LOG_ERROR << "  - Init " << _tp.provider->getTypeName()
                << LOGGER_TEXT_RED << " Failure!" << EndLine;
         providers.remove(i);
         delete _tp.provider;
         i--;
+        continue;
       }
+
+      _tp.timeUntilUpdate = _tp.provider->getSecondsThreshold();
+      logger << LOG_INFO << "  - Init " << _tp.provider->getTypeName()
+              << LOGGER_TEXT_GREEN << " Success" << EndLine
+              << LOG_DEBUG << "   Updating each " << _tp.timeUntilUpdate << EndLine;
     }
+    logger << LOG_INFO << "Initializing Time Providers - Finished" << EndLine;
     return success;
   }
 
@@ -73,24 +75,26 @@ class SystemTimeProvider : public ITimeProvider {
     DateTime now = DateTime(SECONDS_FROM_1970_TO_2000);
     _for_each_r(providers, _tp, ProviderUpdateEvents) {
       logger << LOG_DEBUG << "Updating " << _tp.provider->getTypeName() << EndLine;
-      _tp.timeUntilUpdate--;
-      if (_tp.timeUntilUpdate == 0) {
-        bool status = _tp.provider->update();
-        _tp.timeUntilUpdate = _tp.provider->getSecondsThreshold();
-        if (status) {
-          logger << LOG_DEBUG << LOGGER_TEXT_GREEN << "Success!" << EndLine;
-          DateTime d = _tp.provider->get().toDateTime();
-          if (now <= d) {
-            now = d;
-          }
-          if (_tp.provider->getType() == PRIMARY) {
-            return now;
-          }
-        } else {
-          logger << LOG_ERROR << "Error while updating time provider!" << EndLine;
-        }
-      } else {
+      if (_tp.timeUntilUpdate > 0) {
         logger << LOG_DEBUG << "  In " << _tp.timeUntilUpdate << "s" << EndLine;
+        _tp.timeUntilUpdate--;
+        continue;
+      }
+
+      _tp.timeUntilUpdate = _tp.provider->getSecondsThreshold();
+      if (!_tp.provider->update()) {
+        logger << LOG_ERROR << "Error while updating time provider!" << EndLine;
+        continue;
+      }
+
+      logger << LOG_DEBUG << LOGGER_TEXT_GREEN << "Success!" << EndLine;
+      DateTime d = _tp.provider->get().toDateTime();
+      if (now <= d) {
+        now = d;
+
+        if (_tp.provider->getType() == PRIMARY) {
+          break;
+        }
       }
     }
     return now;
