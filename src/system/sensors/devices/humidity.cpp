@@ -19,5 +19,6 @@ bool SensorHumidity::init ()
  */
 bool SensorHumidity::update ()
 {
+    value = analogRead(pin);
     return true;
 }

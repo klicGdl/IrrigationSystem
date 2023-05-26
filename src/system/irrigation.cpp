@@ -104,7 +104,9 @@ void IrrigationSystem::InitDevices()
   }
 }
 
-void IrrigationSystem::InitSensors() {}
+void IrrigationSystem::InitSensors() {
+  SensorHumidity humedad("sensorhumedad",PIN_ANALOG_IN)
+}
 
 void IrrigationSystem::InitRelays()
 {

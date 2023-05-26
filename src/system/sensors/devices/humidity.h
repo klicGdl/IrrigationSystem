@@ -17,7 +17,7 @@
  * ---------------------------------------------------------------------*/
 #if !defined(__IRRIGATION_SYSTEM_SENSORS_DEVICES_HUMIDITY_H__)
 #define __IRRIGATION_SYSTEM_SENSORS_DEVICES_HUMIDITY_H__
-
+#include <Arduino.h>
 #include "../isensor.h"
 
 class SensorHumidity : public ISensor {
