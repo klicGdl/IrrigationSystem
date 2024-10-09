@@ -1,6 +1,15 @@
+# This is a basic workflow to help you get started with Actions
 name: PlatformIO CI
 
-on: [push, pull_request]
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
   platformio-build:
@@ -8,7 +17,7 @@ jobs:
     container: infinitecoding/platformio-for-ci:latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Upgrade PlatformIO
         run: pio upgrade
@@ -16,17 +25,20 @@ jobs:
       - name: Check PlatformIO version
         run: pio --version
 
-      - name: Install platform
+      - name: Install platform ESP12
         run: pio platform install espressif8266
 
       - name: Build firmware ESP12
         run: pio run -d . -e esp12e
 
+      - name: Install platform ESP32
+        run: pio platform install espressif32
+
       - name: Build firmware ESP32
         run: pio run -d . -e esp32
 
       - name: Upload firware artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: firmware.elf
           path: example/.pio/build/esp12e/firmware.elf
