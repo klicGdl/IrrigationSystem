@@ -30,9 +30,11 @@
 #include "time/controller.hpp"
 #include "utils/storage.h"
 #include "system/display/display.h"
+#include "system/sensors/devices/humidity.h"
 
 #define KERNEL_SERIAL_SPEED 115200
 #define NVRAM_MAX_RELAYS    4
+#define PIN_ANALOG_IN   A0
 
 class IrrigationSystem {
     //
